@@ -1,0 +1,11 @@
+workflow-aggregator:latest
+configuration-as-code:latest
+git:latest
+docker-workflow:latest
+docker-plugin:latest
+kubernetes-cli:latest
+credentials-binding:latest
+junit:latest
+pipeline-stage-view:latest
+github:latest
+gradle:latest

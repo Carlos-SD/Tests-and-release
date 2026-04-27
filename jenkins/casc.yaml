@@ -1,0 +1,33 @@
+# Jenkins Configuration as Code (JCasC)
+# Loaded automatically on first boot — no manual UI setup needed
+
+jenkins:
+  systemMessage: "CircleGuard CI/CD — managed by JCasC"
+  numExecutors: 2
+  mode: NORMAL
+  scmCheckoutRetryCount: 2
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          name: Admin
+          password: "${JENKINS_ADMIN_PASSWORD:-admin}"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          # kubeconfig file — Jenkins uses this to run kubectl commands
+          - file:
+              scope: GLOBAL
+              id: kubeconfig
+              description: "Kubernetes cluster config"
+              fileName: kubeconfig
+              secretBytes: "${KUBECONFIG_B64:-}"
+

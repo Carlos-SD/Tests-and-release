@@ -1,0 +1,24 @@
+services:
+
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: circleguard-jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"    # Jenkins UI
+      - "50000:50000"  # Jenkins agent port
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock   # Docker-in-Docker access
+      - ${HOME}/.kube:/var/jenkins_home/.kube:ro    # kubeconfig from host
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - DOCKER_API_VERSION=1.44
+      - API_VERSION=1.44
+    group_add:
+      - "${DOCKER_GID:-999}"   # give Jenkins access to Docker socket group
+
+volumes:
+  jenkins_home:

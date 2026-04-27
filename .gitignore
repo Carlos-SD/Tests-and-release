@@ -46,3 +46,4 @@ web-build/
 *_data/
 pgdata/
 neo4jdata/
+jenkins/.env
