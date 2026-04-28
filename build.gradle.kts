@@ -44,6 +44,15 @@ subprojects {
     }
 
     tasks.withType<Test> {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            val include = project.findProperty("include")?.toString()
+            val exclude = project.findProperty("exclude")?.toString()
+            if (include != null) {
+                includeTags(*include.split(",").map { it.trim() }.toTypedArray())
+            }
+            if (exclude != null) {
+                excludeTags(*exclude.split(",").map { it.trim() }.toTypedArray())
+            }
+        }
     }
 }
