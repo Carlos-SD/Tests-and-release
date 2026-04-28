@@ -215,7 +215,7 @@ ${fixes ?: '_No bug fixes_'}
 ${other ?: '_No other changes_'}
 
 ## Docker Images
-${['auth','identity','promotion','notification','form','file','gateway','dashboard'].collect { "- \`${env.REGISTRY}/${env.IMAGE_PREFIX}/${it}:${env.IMAGE_TAG}\`" }.join('\n')}
+${['auth','identity','promotion','notification','form','file','gateway','dashboard'].collect { "- ${env.REGISTRY}/${env.IMAGE_PREFIX}/${it}:${env.IMAGE_TAG}" }.join('\n')}
 """
                     writeFile file: "RELEASE_NOTES_${version}.md", text: notes
                     archiveArtifacts artifacts: "RELEASE_NOTES_${version}.md"
