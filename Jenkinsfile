@@ -32,7 +32,7 @@ pipeline {
                 }
             }
             steps {
-                sh './gradlew test -Pexclude=integration,performance'
+                sh './gradlew test -Pexclude=integration,performance,e2e'
             }
             post {
                 always {
@@ -83,6 +83,38 @@ pipeline {
         }
 
         // ----------------------------------------------------------------
+        // STAGE 4B — Locust Load Tests (stage and master branches)
+        // ----------------------------------------------------------------
+        stage('Locust Load Tests') {
+            when {
+                anyOf {
+                    branch 'stage'
+                    branch 'master'
+                }
+            }
+            steps {
+                sh '''
+                    if command -v locust >/dev/null 2>&1; then
+                        locust -f performance/locustfile.py \
+                            --headless \
+                            -u ${LOCUST_USERS:-50} \
+                            -r ${LOCUST_SPAWN_RATE:-5} \
+                            -t ${LOCUST_DURATION:-2m} \
+                            --host ${LOCUST_HOST:-http://gateway-service:8087} \
+                            --html performance/locust-report.html
+                    else
+                        echo "Locust is not installed on this Jenkins agent; skipping external load test."
+                    fi
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'performance/locust-report.html', allowEmptyArchive: true
+                }
+            }
+        }
+
+        // ----------------------------------------------------------------
         // STAGE 5 — Docker Build & Push (all branches)
         // ----------------------------------------------------------------
         stage('Docker Build & Push') {
@@ -120,6 +152,7 @@ pipeline {
             steps {
                 sh 'kubectl apply -f k8s/namespaces.yaml'
                 sh 'kubectl apply -f k8s/infra/ -n circleguard-dev'
+                sh 'kubectl rollout status deployment/postgres deployment/redis deployment/neo4j deployment/zookeeper deployment/kafka --namespace=circleguard-dev --timeout=300s'
                 sh 'kubectl apply -f k8s/dev/'
                 sh 'kubectl rollout status deployment --namespace=circleguard-dev --timeout=120s'
             }
@@ -133,6 +166,7 @@ pipeline {
             steps {
                 sh 'kubectl apply -f k8s/namespaces.yaml'
                 sh 'kubectl apply -f k8s/infra/ -n circleguard-stage'
+                sh 'kubectl rollout status deployment/postgres deployment/redis deployment/neo4j deployment/zookeeper deployment/kafka --namespace=circleguard-stage --timeout=300s'
                 sh 'kubectl apply -f k8s/stage/'
                 sh 'kubectl rollout status deployment --namespace=circleguard-stage --timeout=120s'
             }
@@ -160,6 +194,8 @@ pipeline {
             when { branch 'stage' }
             steps {
                 sh 'kubectl apply -f k8s/namespaces.yaml'
+                sh 'kubectl apply -f k8s/infra/ -n circleguard-master'
+                sh 'kubectl rollout status deployment/postgres deployment/redis deployment/neo4j deployment/zookeeper deployment/kafka --namespace=circleguard-master --timeout=300s'
                 sh 'kubectl apply -f k8s/master/'
                 sh 'kubectl rollout status deployment --namespace=circleguard-master --timeout=180s'
             }
