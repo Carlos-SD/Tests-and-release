@@ -13,6 +13,11 @@ build/
 *.tar.gz
 *.rar
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
 # Maven
 target/
 **/target/
@@ -46,3 +51,4 @@ web-build/
 *_data/
 pgdata/
 neo4jdata/
+jenkins/.env

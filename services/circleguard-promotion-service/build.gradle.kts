@@ -6,6 +6,19 @@ plugins {
     kotlin("plugin.jpa")
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.testcontainers") {
+            useVersion("1.20.6")
+            because("Docker Desktop 29.x requires API v1.44+; Testcontainers 1.19.x bundles docker-java defaulting to v1.41")
+        }
+        if (requested.group == "com.github.docker-java" && requested.name == "docker-java-transport-zerodep") {
+            useVersion("3.4.0")
+            because("docker-java 3.4.0 defaults to Docker API v1.44, compatible with Docker Desktop 29.x")
+        }
+    }
+}
+
 dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.4"))
     testImplementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.4"))
@@ -26,7 +39,13 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.3")
-    testImplementation("org.testcontainers:postgresql:1.19.3")
-    testImplementation("org.testcontainers:neo4j:1.19.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.6")
+    testImplementation("org.testcontainers:postgresql:1.20.6")
+    testImplementation("org.testcontainers:neo4j:1.20.6")
+}
+
+tasks.withType<Test> {
+    environment("API_VERSION", "1.44")
+    environment("DOCKER_API_VERSION", "1.44")
+    jvmArgs("-Dapi.version=1.44")
 }
