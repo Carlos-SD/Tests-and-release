@@ -13,6 +13,11 @@ build/
 *.tar.gz
 *.rar
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
 # Maven
 target/
 **/target/

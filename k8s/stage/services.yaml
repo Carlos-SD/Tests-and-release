@@ -26,8 +26,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/circleguard_auth
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8180
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -72,8 +71,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/circleguard_identity
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8083
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -118,8 +116,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/circleguard_promotion
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8088
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -161,8 +158,7 @@ spec:
             - configMapRef:
                 name: circleguard-config
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8082
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -207,8 +203,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/circleguard_form
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8086
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -250,8 +245,7 @@ spec:
             - configMapRef:
                 name: circleguard-config
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8085
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -296,8 +290,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/circleguard_dashboard
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8084
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -339,8 +332,7 @@ spec:
             - configMapRef:
                 name: circleguard-config
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8087
             initialDelaySeconds: 30
             periodSeconds: 10
