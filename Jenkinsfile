@@ -10,6 +10,7 @@ pipeline {
         API_VERSION    = '1.44'
         TESTCONTAINERS_RYUK_DISABLED = 'true'
         TESTCONTAINERS_CHECKS_DISABLE = 'true'
+        TESTCONTAINERS_HOST_OVERRIDE = 'host.docker.internal'
     }
 
     stages {
