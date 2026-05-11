@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY       = 'localhost:65401'
         IMAGE_PREFIX   = 'circleguard'
         IMAGE_TAG      = "${env.BUILD_NUMBER}"
         KUBECONFIG     = credentials('kubeconfig')
@@ -118,7 +117,7 @@ pipeline {
         }
 
         // ----------------------------------------------------------------
-        // STAGE 5 — Docker Build & Push (all branches)
+        // STAGE 5 — Docker Build (all branches)
         // ----------------------------------------------------------------
         stage('Docker Build & Push') {
             steps {
@@ -136,12 +135,9 @@ pipeline {
                     def shortName = { String s -> s.replace('circleguard-', '').replace('-service', '') }
 
                     services.each { svc ->
-                        def img = "${env.REGISTRY}/${env.IMAGE_PREFIX}/${shortName(svc)}:${env.IMAGE_TAG}"
+                        def img = "${env.IMAGE_PREFIX}/${shortName(svc)}-service:${env.IMAGE_TAG}"
                         sh "docker build -t ${img} services/${svc}/"
-                        sh "docker push ${img}"
-                        // also tag as :latest for the branch
-                        sh "docker tag ${img} ${env.REGISTRY}/${env.IMAGE_PREFIX}/${shortName(svc)}:latest"
-                        sh "docker push ${env.REGISTRY}/${env.IMAGE_PREFIX}/${shortName(svc)}:latest"
+                        sh "docker tag ${img} ${env.IMAGE_PREFIX}/${shortName(svc)}-service:latest"
                     }
                 }
             }
@@ -254,7 +250,7 @@ ${fixes ?: '_No bug fixes_'}
 ${other ?: '_No other changes_'}
 
 ## Docker Images
-${['auth','identity','promotion','notification','form','file','gateway','dashboard'].collect { "- ${env.REGISTRY}/${env.IMAGE_PREFIX}/${it}:${env.IMAGE_TAG}" }.join('\n')}
+${['auth','identity','promotion','notification','form','file','gateway','dashboard'].collect { "- ${env.IMAGE_PREFIX}/${it}-service:${env.IMAGE_TAG}" }.join('\n')}
 """
                     writeFile file: "RELEASE_NOTES_${version}.md", text: notes
                     archiveArtifacts artifacts: "RELEASE_NOTES_${version}.md"
