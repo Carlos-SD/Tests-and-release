@@ -13,12 +13,13 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock   # Docker-in-Docker access
       - ${HOME}/.kube:/var/jenkins_home/.kube:ro    # kubeconfig from host
+      - ${HOME}/.minikube:/Users/carlosfelipe/.minikube:ro # minikube certs referenced by kubeconfig
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - DOCKER_API_VERSION=1.44
       - API_VERSION=1.44
     group_add:
-      - "${DOCKER_GID:-999}"   # give Jenkins access to Docker socket group
+      - "0"   # give Jenkins access to Docker socket group on Docker Desktop
 
 volumes:
   jenkins_home:
