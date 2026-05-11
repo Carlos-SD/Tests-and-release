@@ -8,6 +8,8 @@ pipeline {
         KUBECONFIG     = credentials('kubeconfig')
         DOCKER_API_VERSION = '1.44'
         API_VERSION    = '1.44'
+        TESTCONTAINERS_RYUK_DISABLED = 'true'
+        TESTCONTAINERS_CHECKS_DISABLE = 'true'
     }
 
     stages {
