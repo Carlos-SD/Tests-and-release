@@ -19,7 +19,7 @@ services:
       - DOCKER_API_VERSION=1.44
       - API_VERSION=1.44
     group_add:
-      - "${DOCKER_GID:-0}"   # give Jenkins access to Docker socket group
+      - "0"   # give Jenkins access to Docker socket group on Docker Desktop
 
 volumes:
   jenkins_home:
